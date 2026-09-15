@@ -14,10 +14,18 @@ import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import static com.pedropathing.api.Paths.*;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-@Autonomous
+@Autonomous(name = "Autonomous StarTech V11", group = "Opmode")
 public class Autonom extends OpMode {
+
+    HardwareBox robot = new HardwareBox();
+
+    private VisionPortal visionPortal;
+    private AprilTagProcessor aprilTag;
     private Follower follower;
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
@@ -46,6 +54,8 @@ public class Autonom extends OpMode {
     @Override
     public void init() {
         Scheduler.reset();
+        robot.init(hardwareMap);
+        initVision();
 
         follower = Constants.create(hardwareMap);
         follower.setPose(startPose);
@@ -68,5 +78,28 @@ public class Autonom extends OpMode {
         telemetry.addData("Heading", Math.toDegrees(follower.pose().heading()));
         telemetry.addData("Follower Mode", follower.mode());
         telemetry.update();
+    }
+
+    private void initVision() {
+        try {
+            aprilTag = new AprilTagProcessor.Builder()
+                    .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                    .build();
+
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                    .addProcessor(aprilTag)
+                    .build();
+
+            /*while (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING
+                    && !isStopRequested()) {
+                sleep(20);
+            }*/
+
+
+        } catch (Exception e) {
+            aprilTag = null;
+            visionPortal = null;
+        }
     }
 }
