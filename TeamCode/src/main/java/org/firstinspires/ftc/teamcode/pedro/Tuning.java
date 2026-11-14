@@ -18,12 +18,17 @@ public class Tuning {
     }
     @Tuner
     public static Procedure tests() {
-        return new Tests(hardwareMap -> new Mecanum(hardwareMap, Constants.drivetrainConfig), null, null);
+        return new Tests(hardwareMap -> new Mecanum(hardwareMap, Constants.drivetrainConfig), (hardwareMap -> new ThreeWheelLocalizer(hardwareMap, Constants.localizerConfig)), null);
     }
 
     @Tuner
     public static Procedure threeWheelTuner() {
         return new ThreeWheelTuner();
+    }
+
+    @Tuner
+    public static Procedure foresightTuner() {
+        return new ForesightTuner((hardwareMap) -> new ThreeWheelLocalizer(hardwareMap, Constants.localizerConfig), (hardwareMap) -> new Mecanum(hardwareMap, Constants.drivetrainConfig));
     }
 
 }

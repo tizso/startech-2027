@@ -17,9 +17,9 @@ import java.util.List;
 
 public class ThreeWheelTuner extends Procedure {
 
-    private static String leftEncoderName = "lf";
-    private static String rightEncoderName = "rr";
-    private static String strafeEncoderName = "lr";
+    private static String leftEncoderName = "leftFront";
+    private static String rightEncoderName = "rightBack";
+    private static String strafeEncoderName = "rightFront";
 
     public ThreeWheelTuner() {
         super("Three Wheel Tuner", "Tune three odometry pods");
@@ -31,7 +31,7 @@ public class ThreeWheelTuner extends Procedure {
                 "Set the motor ports that the three odometry encoders are plugged into.");
         Inputs.Field<String> leftEncoder = setup.s("Left Encoder Motor Name").withDefault("leftFront");
         Inputs.Field<String> rightEncoder = setup.s("Right Encoder Motor Name").withDefault("rightBack");
-        Inputs.Field<String> strafeEncoder = setup.s("Strafe Encoder Motor Name").withDefault("leftBack");
+        Inputs.Field<String> strafeEncoder = setup.s("Strafe Encoder Motor Name").withDefault("rightFront");
         awaitInputs(setup);
         leftEncoderName = leftEncoder.get();
         rightEncoderName = rightEncoder.get();
@@ -151,7 +151,7 @@ public class ThreeWheelTuner extends Procedure {
             c.strafePodX.set(0.0);
             c.forwardTicksToInches.set(forward);
             c.strafeTicksToInches.set(strafe);
-            c.turnTicksToRadians.set(0.0);
+            c.turnTicksToRadians.set(1.0);
             c.leftEncoderDirection.set(leftDirection);
             c.rightEncoderDirection.set(rightDirection);
             c.strafeEncoderDirection.set(strafeDirection);
@@ -165,7 +165,7 @@ public class ThreeWheelTuner extends Procedure {
         for (String name : new String[]{"leftFront", "leftBack", "rightFront", "rightBack"}) {
             DcMotorEx motor = map.get(DcMotorEx.class, name);
             motor.setPower(0);
-            motor.setDirection(name.equals("leftFront") || name.equals("lefltBack")
+            motor.setDirection(name.equals("leftFront") || name.equals("leftBack")
                     ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
